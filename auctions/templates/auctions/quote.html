@@ -1,0 +1,17 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}Quote{% endblock %}
+
+{% block body %}
+    <h2>{{title}}</h2>
+
+	<div class="row justify-content-center" style="margin-top: 25px;">
+			{% for auction in data %}
+            <div class="col-2 borderperso" style="text-align: center">
+            <a href="/listing/{{auction.id}}"><li><h3 style="text-align: left; padding: 10px;">{{ auction.name }} <br> <span style="font-size: 15px;">Current bid:</span> <b>{{auction.price}}$</b></h3>
+          	<img src={{auction.picture}} style="height:100px;width: auto;"></li></a>
+            </div>
+   			{% endfor %}		
+	</div> 
+
+{% endblock %}

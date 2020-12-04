@@ -1,0 +1,94 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}Listing: {{ data.name }}{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-12" style="margin-top: 15px;">
+	    <h2 style="text-align: left; font-size: 40px;">{{ data.name }}</h2>
+    </div>
+</div>
+<div class="row">
+    <div class="col-3" style="padding-top: 5px;">
+        <p style="text-align: left; font-size: 20px">Sold by <em>{{data.owner}}</em><br><span style="font-size: 14px;">{{data.creationdate}}</span></p>
+        <span style="font-size: 30px; font-weight: bold">{{price.current_bid}}$</span>
+        {% if price.current_winner != data.owner %}
+            <p>Current Winner: {{price.current_winner}}</p>
+        {% endif %}
+        <p style="padding-top: 10px;">Description: {{ data.description }}</p>
+
+
+        {% if data.isactive %}
+
+            {% if user.is_authenticated %}
+                {% if request.user.id != data.owner.id %}
+
+                    <form action="/bid/{{data.id}}/" method="post">
+                        {% csrf_token %}
+                        {{ bid_form }}
+
+                        <input class="btn btn-primary" style="background-color: #ffd820; color: #343a40; margin-top: 10px;" type="submit" value="Make a bid"/>
+                    </form>
+                    {% if checkstate == False %}
+                        <form action="/addwlist/{{data.id}}/">
+                            <input class="btn btn-primary" style="background-color: #ffd820; color: #343a40; margin-top: 5px;" type="submit" value="Add to Watchlist" />
+                        </form>
+                    {% else %}
+                        <form action="/rmvwlistbyid/{{data.id}}/">
+                            <input class="btn btn-primary" style="background-color: #ffd820; color: #343a40; margin-top: 5px;" type="submit" value="Remove from Watchlist" />
+                        </form>
+                    {% endif %}
+                {% else %}
+                    <form action ="/close_auction/{{data.id}}/">
+                        <input type ="submit" class="btn btn-primary" style="background-color: #ffd820; color: #343a40; margin-top: 5px;" value="Close Auction"/>
+                    </form>
+                {% endif %}
+
+            {% endif%}
+
+        {% else %}
+
+            {% if price.current_winner.id == request.user.id %}
+
+                <p style="font-size: 20px; margin-top: 50px;">Auction closed.<br> <b>You won, congratulation!</b></p>                
+
+            {% else %}
+
+                <p style="text-align: left; margin-top: 50px; font-size: 20px">Auction closed.<br> <b>Winner is: {{price.current_winner}}</b></p>
+            {% endif%}
+
+        {% endif%}
+    </div>
+    <div class="col-auto" style="padding-top: 5px;">
+        <img src="{{data.picture}}" style="width: 200px;">
+    </div>
+</div>
+
+<div style="margin-top: 110px;"></div>
+    {% for commentary in commentaries %}
+        <div class="row" style="padding: 10px;">
+            <div class="col-2" style="border-bottom: solid;">
+                <p> by: <b>{{commentary.id_sender}}</b></p><p>{{commentary.comment_date}}</p>
+            </div>
+            <div class="col-5" style="border-bottom: solid; border-color: #343a40;">    
+                  <p>{{commentary.comment}}</p>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% if user.is_authenticated %}
+    <div class="row" style="margin-top: 20px;">
+        <div class="col">
+            <form action="/add_comment/{{data.id}}/" method="post" style="padding-left: 40px;">
+                {% csrf_token %}
+                {{ comment_form }}
+                <br>
+                <input class="btn btn-primary" style="background-color: #ffd820; color: #343a40; margin-top: 15px; margin-bottom: 15px;" type="submit" value="Post commentary"/>
+            </form>
+        </div>
+    </div>
+{% endif %}
+
+
+
+{% endblock %}

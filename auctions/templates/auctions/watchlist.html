@@ -1,0 +1,25 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}Watchlist{% endblock %}
+
+{% block body %}
+<div class="row">
+	<div class="col-12">
+    	<h2>Watchlist</h2>
+    </div>
+</div>
+
+<div class="row" style="margin-top: 25px;">
+    {% for auction in data %}
+    	<div class="col-auto">
+            <a href="/listing/{{auction.id_auction.id}}"><li><h3 style="text-align: center; padding-top: 10px;">{{ auction.id_auction.name }}</h3>
+            </li></a>
+
+            <form action="/rmvwlist/{{auction.id}}/">
+				<input class="btn btn-primary" style="margin-top: 5px; background-color: #ffd820; color: #343a40;" type="submit" value="Remove from Watchlist" />
+			</form>
+		</div>
+    {% endfor %}
+</div>
+
+{% endblock %}
